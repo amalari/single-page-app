@@ -1,0 +1,56 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    {{pageTitle}}
+  </h1>
+</section>
+
+<section class="content">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">{{formTitle}}</h3>
+        </div><!-- /.box-header -->
+        <!-- form start -->
+        <form role="form" ng-submit="save()">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Username</label>
+              <input type="text" class="form-control" ng-model="model.username" placeholder="Enter Username" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="password" class="form-control" ng-model="model.password" placeholder="Enter Password" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Fullname</label>
+              <input type="text" class="form-control" ng-model="model.fullname" placeholder="Enter Fullname" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Phone Number</label>
+              <input type="text" class="form-control" ng-model="model.phone_number"  placeholder="Enter Phone Number" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email</label>
+              <input type="email" class="form-control" ng-model="model.email"  placeholder="Enter Email" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Title</label>
+              <select class="form-control" ng-model="model.title_id" required>
+                <option selected disabled hidden value=''></option>
+                <option class="form-control" value="1" >Admin</option>
+                <option class="form-control" value="2" >User</option>
+              </select>
+            </div>
+          </div><!-- /.box-body -->
+
+          <div class="box-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
