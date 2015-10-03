@@ -44,7 +44,7 @@
 									<button type="button"  ng-click="remove(product.id, product.name)" class="btn btn-default"><i class="fa fa-remove"></i></button>
 								</td>
 								<td>
-									<input type="number" max={{product.stock}} style="width: 40px; height:32px" ng-model="model.stockOut">
+									<input type="number" max={{product.stock}} style="width: 40px; height:32px" ng-model="model.stockOut[product.id]">
 									<button type="button" class="btn btn-default" ng-click="spend(product.id, product.name)"><i class="fa fa-minus-square"></i></button>
 								</td>									
 							</tr>

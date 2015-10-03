@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('bootstrapApp.services')
-.factory('User', ['$window', '$resource', function($window, $resource){
+.factory('User', ['$resource', function($resource){
 	return $resource('http://localhost:3001/user/:id', {id:'@id'}, {
 		update:{
 			method:"PUT"
-		}, query:{
+		} , query:{
 			method:"GET", isArray:false
 		}
 	});
