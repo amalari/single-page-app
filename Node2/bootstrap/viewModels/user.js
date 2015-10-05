@@ -1,5 +1,5 @@
 var User = require('./../models/user.js');
-
+var UserPassword = require('./password-encrypt.js');
 // function UserViewModel(result){
 // 	// var data = [];
 // 	var newResult = result.data.map(function(data){
@@ -41,6 +41,7 @@ var User = require('./../models/user.js');
 
 UserViewModel = {
 	list : function(listData){
+		console.log(listData);
 		console.log('processing data');
 		var result = listData.data.map(function(data){
 			return {
@@ -48,7 +49,8 @@ UserViewModel = {
 				username : data.username,
 				fullname : data.fullname,
 				email : data.email,
-				phone_number : data.phone_number}
+				phone_number : data.phone_number,
+				title : data.role.name}
 			});
 		listData.data = result
 		return listData;
@@ -72,6 +74,20 @@ UserViewModel = {
 		// 	phone_number : singleData.attributes.phone_number
 		// }
 	}
+	// ,
+	// save : function(user){
+	// 	console.log("kesini ga?");
+	// 	// var UserPass = new UserPassword();
+	// 	var pass = UserPassword.encrypt(user);
+	// 	var result = {};
+	// 	result.username = user.username;
+	// 	result.fullname = user.fullname;
+	// 	result.phone_number = user.phone_number;
+	// 	result.email = user.email;
+	// 	result.title_id = user.title_id;
+	// 	result.password = pass;
+	// 	return result;
+	// }
 }
 
 module.exports = UserViewModel;

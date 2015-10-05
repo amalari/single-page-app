@@ -12,7 +12,9 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var bcrypt   = require('bcrypt-nodejs');
 var hbs = require('hbs');
-// var User = require('./models/user.js');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var UserDB = require('./models/user.js');
 // var UserViewModel = require('./viewModels/user.js');
 var User = require('./controllers/user.js');
 var Product = require('./controllers/product.js');
@@ -20,13 +22,55 @@ var ProductHistory = require('./controllers/product-history.js');
 
 
 app.use(cors());
-// app.set('view engine', 'html');
-// app.engine('html', hbs.__express);
+var handlebars = require('express-handlebars').create({ 
+	extname : '.html',
+	defaultLayout:'main',
+	helpers: {
+		section: function(name, options){
+			// console.log(!this._sections);
+			// console.log(name);
+			// console.log(option);
+			// console.log(this);
+			if(!this._sections) this._sections = {};
+			this._sections[name] = options.fn(this);
+			return null;
+		}
+	}
+});
+app.engine('.html',handlebars.engine);
+app.set('view engine', '.html');
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
 	extended: true,
 	limit: '50mb'
 }));
+
+app.use(session({secret: 'mySecretKey'}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(function(req, res, next){
+        // if there's a flash message, transfer
+        // it to the context, then clear it
+        res.locals.flash = req.flash;
+        delete req.flash;
+        next();
+    });
+
+passport.serializeUser(function(user, done) {
+	done(null, user);
+});
+
+passport.deserializeUser(function(id, done) {
+	new UserDB.get(id).then(function(user) {
+		done(null, user);
+	})
+	.catch(function(err){
+		done(null, err);
+	});
+});
+
 // app.use(passport.initialize());
 // app.use(passport.session());
 // app.use(flash());
@@ -129,9 +173,9 @@ app.use(bodyParser.urlencoded({
 // );
 
 
-User.registerRoutes(app);
-Product.registerRoutes(app);
-ProductHistory.registerRoutes(app);
+	User.registerRoutes(app);
+	Product.registerRoutes(app);
+	ProductHistory.registerRoutes(app);
 // app.get('/user', function(req, res) {
 
 // 	// console.log(req.query.page);
@@ -146,7 +190,7 @@ ProductHistory.registerRoutes(app);
 // 	// })
 // 	.then(function(result){
 // 		console.log(result);
-		
+
 // 		res.send(new UserViewModel(result));
 // 	});
 // 	// var limit = req.query.limit;
@@ -299,4 +343,4 @@ ProductHistory.registerRoutes(app);
 // 		res.send({success:false, message:err.message});
 // 	});
 // });
-app.listen(3001);
+	app.listen(3001);

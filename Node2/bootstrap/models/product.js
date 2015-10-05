@@ -13,7 +13,7 @@ var Product = bookshelf.Model.extend({
 	}
 },{
 	get : Promise.method(function(id){
-		return new this({id:id}).fetch()
+		return new this({id:id}).fetch({withRelated : ['histories','brand']})
 	}),
 	query : Promise.method(function(){
 		return this.collection().query(function(temp){

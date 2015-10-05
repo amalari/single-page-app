@@ -24,7 +24,7 @@ ProductViewModel = {
 		return result;
 	},
 	single : function(singleData){
-		// console.log(singleData);
+		console.log(singleData);
 		var result = {};
 		result.id = singleData.id;
 		result.code = singleData.code;
