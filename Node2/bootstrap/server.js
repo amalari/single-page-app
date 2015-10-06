@@ -14,6 +14,7 @@ var bcrypt   = require('bcrypt-nodejs');
 var hbs = require('hbs');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var localStrategy = require('./viewModels/local-strategy.js');
 var UserDB = require('./models/user.js');
 // var UserViewModel = require('./viewModels/user.js');
 var User = require('./controllers/user.js');
@@ -53,8 +54,8 @@ app.use(passport.session());
 app.use(function(req, res, next){
         // if there's a flash message, transfer
         // it to the context, then clear it
-        res.locals.flash = req.flash;
-        delete req.flash;
+        res.locals.generalMessage = req.flash('message')[0];
+        // delete req.flash;
         next();
     });
 
@@ -171,8 +172,7 @@ passport.deserializeUser(function(id, done) {
 //     process.nextTick(findOrCreateUser);
 //   });
 // );
-
-
+	// localStrategy(app);
 	User.registerRoutes(app);
 	Product.registerRoutes(app);
 	ProductHistory.registerRoutes(app);

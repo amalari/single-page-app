@@ -1,6 +1,51 @@
 var User = require('./../models/user.js');
 var UserViewModel = require('./../viewModels/user.js');
 var bcrypt = require('bcrypt-nodejs');
+var passport = require('passport');
+var localStrategy = require('./../viewModels/local-strategy.js');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require('bcrypt-nodejs');
+
+var isValidPassword = function(pass, passEncrypted){
+	console.log("password asli" + pass);
+	console.log("password encrypted" + passEncrypted);
+		// var result;
+		return bcrypt.compareSync(pass, passEncrypted)
+		// , function(err, res){
+		// 	console.log("hasil " + res);
+		// 	return res;
+		// })
+		// console.log(result);
+		// return result;
+	};
+
+passport.use('local',new LocalStrategy(function(username, password, done) {
+	User.getUserValid(username)
+	.then(function(model){
+		console.log("local strategy");
+		var user = model.toJSON();
+		console.log(user);
+		console.log("ini" + password);
+		if(user.username === null){
+			return done(null, false, req.flash('message',{
+				type: 'Notice',
+				intro: 'Validation error',
+				message: 'Incorect username'}));
+		}
+		if(!isValidPassword(password, user.password)){
+			return done(null, false, req.flash('message',{
+				type: 'Notice',
+				intro: 'Validation error',
+				message: 'Incorect password'}));
+		}
+		return done(null, user);
+
+	})
+	.catch(function(err){
+		return done(err, null);
+	})
+}));
 
 exports = {
 	registerRoutes : function(app){
@@ -9,7 +54,9 @@ exports = {
 		app.post('/user', this.save);
 		app.put('/user/:id', this.update);
 		app.delete('/user/:id', this.delete);
-		app.get('/login', this.login);
+		app.get('/login', this.loginPage);
+		app.post('/login', this.login);
+		app.get('/dashboard', this.dashboard);
 	},
 	list : function(req, res){
 		var start = (req.query.page-1)*req.query.limit;
@@ -52,8 +99,16 @@ exports = {
 			res.send({success : true})
 		})
 	},
-	login : function(req, res){
-		res.render('login');
+	loginPage : function(req, res){
+		res.render('login', req.flash('message'));
+	},
+	login : passport.authenticate('local', {
+		successRedirect: '/dashboard',
+		failureRedirect: '/login',
+		failureFlash: true
+	}),
+	dashboard : function(req, res){
+		res.render('index', {layout: false})
 	}
 }
 

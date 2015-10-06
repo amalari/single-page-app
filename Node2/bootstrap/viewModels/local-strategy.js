@@ -16,6 +16,7 @@ passport.deserializeUser(function(id, done){
 });
 
 module.exports = function(app){
+	console.log("lewat local strategy")
 	// if(!options.successRedirect){
 	// 	options.successRedirect = '/';
 	// };
@@ -33,16 +34,25 @@ module.exports = function(app){
 	}
 
 	return {
-		init : function(){
-			passport.use('local', new LocalStrategy(function(req, username, password, done) {
+		init : 
+		//function(){
+			passport.use(new LocalStrategy(function(username, password, done) {
 				User.getUserValid(username)
 				.then(function(model){
+					console.log("local strategy");
 					var user = model.toJSON();
+					console.log(user);
 					if(user.username === null){
-						return done(null, false, req.flash('message','Incorect username'));
+						return done(null, false, req.flash('message',{
+							type: 'Notice',
+							intro: 'Validation error',
+							message: 'Incorect username'}));
 					}
 					if(!isValidPassword(password, user.password)){
-						return done(null, false, req.flash('message','Incorect Password'));
+						return done(null, false, req.flash('message',{
+							type: 'Notice',
+							intro: 'Validation error',
+							message: 'Incorect password'}));
 					}
 					return done(null, user);
 
@@ -50,7 +60,7 @@ module.exports = function(app){
 				.catch(function(err){
 					return done(err, null);
 				})
-			}));
+			}))
 		}
 		// registerRoutes : function(){
 		// 	app.get()

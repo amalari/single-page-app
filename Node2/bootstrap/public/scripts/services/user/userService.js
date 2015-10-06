@@ -2,7 +2,7 @@
 
 angular.module('bootstrapApp.services')
 .factory('User', ['$resource', function($resource){
-	return $resource('http://localhost:3001/user/:id', {id:'@id'}, {
+	return $resource('/user/:id', {id:'@id'}, {
 		update:{
 			method:"PUT"
 		} , query:{
