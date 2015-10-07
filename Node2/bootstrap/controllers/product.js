@@ -3,11 +3,11 @@ var ProductViewModel = require('./../viewModels/product.js');
 
 exports = {
 	registerRoutes : function(app){
-		app.get('/product', this.list);
-		app.get('/product/:id', this.single);
-		app.post('/product', this.save);
-		app.put('/product/:id', this.update);
-		app.delete('/product/:id', this.delete);
+		app.get('/api/product', this.list);
+		app.get('/api/product/:id', this.single);
+		app.post('/api/product', this.save);
+		app.put('/api/product/:id', this.update);
+		app.delete('/api/product/:id', this.delete);
 	},
 	list : function(req, res){
 		Product.query()

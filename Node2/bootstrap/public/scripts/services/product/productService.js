@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('bootstrapApp.services')
-.factory('Product', ['$window', '$resource', function($window, $resource){
-	return $resource('http://localhost:3001/product/:id', {id:'@id'} , {
+.factory('Product', ['$window', 'ENV', '$resource', function($window, ENV, $resource){
+	return $resource(ENV.apiEndpoint + '/api/product/:id', {id:'@id'} , {
 		update:{
 			method:"PUT"
 		}

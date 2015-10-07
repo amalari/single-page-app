@@ -14,12 +14,13 @@ var bcrypt   = require('bcrypt-nodejs');
 var hbs = require('hbs');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var localStrategy = require('./viewModels/local-strategy.js');
+// var localStrategy = require('./viewModels/local-strategy.js');
 var UserDB = require('./models/user.js');
 // var UserViewModel = require('./viewModels/user.js');
 var User = require('./controllers/user.js');
 var Product = require('./controllers/product.js');
 var ProductHistory = require('./controllers/product-history.js');
+var userAllow = require('./viewModels/authorization');
 
 
 app.use(cors());
@@ -48,6 +49,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(session({secret: 'mySecretKey'}));
+app.use(cookieParser());
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,6 +57,7 @@ app.use(function(req, res, next){
         // if there's a flash message, transfer
         // it to the context, then clear it
         res.locals.generalMessage = req.flash('message')[0];
+        console.log(req.flash('message'));
         // delete req.flash;
         next();
     });
@@ -63,13 +66,8 @@ passport.serializeUser(function(user, done) {
 	done(null, user);
 });
 
-passport.deserializeUser(function(id, done) {
-	new UserDB.get(id).then(function(user) {
-		done(null, user);
-	})
-	.catch(function(err){
-		done(null, err);
-	});
+passport.deserializeUser(function(obj, done) {
+	done(null,obj)
 });
 
 // app.use(passport.initialize());
@@ -173,9 +171,56 @@ passport.deserializeUser(function(id, done) {
 //   });
 // );
 	// localStrategy(app);
+	app.use('/api', function(req, res, next){
+		console.log(req.xhr);
+		if(!req.xhr){
+			res.redirect('/dashboard');
+		}
+		else if(!req.isAuthenticated()){
+			res.status(401);
+			res.send({message : "user not valid"})
+		}
+		else {
+			next();
+		}
+	});
+
+	// app.use('/dashboard', function(req, res, next){
+	// 	console.log(req.isAuthenticated());
+	// 	if(req.isAuthenticated()){
+	// 		next()
+	// 	} else {
+	// 		res.redirect('/login')
+	// 	}
+	// });
+
+	app.use('/login', function(req, res, next){
+		if(req.isAuthenticated()){
+			res.redirect('/dashboard')
+		} else {
+			next();
+		}
+	});
+
+	// app.use('/api/user', function(req, res, next){
+	// 	var role = req.user.role.title
+	// 	if(role === user || role === admin){
+	// 		next();
+	// 	}
+	// });
+	app.use('/forbidden', function(req, res, next){
+		next('route');
+	});
+	app.use('/api/user', userAllow(['user','admin']));
+	app.use('/api/product', userAllow(['admin']));
+	app.use('/api/history', userAllow(['admin']));
+
+	User.strategy(app);
 	User.registerRoutes(app);
 	Product.registerRoutes(app);
 	ProductHistory.registerRoutes(app);
+
+
 // app.get('/user', function(req, res) {
 
 // 	// console.log(req.query.page);

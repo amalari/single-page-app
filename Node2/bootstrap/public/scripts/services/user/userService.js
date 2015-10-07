@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('bootstrapApp.services')
-.factory('User', ['$resource', function($resource){
-	return $resource('/user/:id', {id:'@id'}, {
+.factory('User', ['$resource', 'ENV', function($resource, ENV){
+	return $resource(ENV.apiEndpoint + '/api/user/:id', {id:'@id'}, {
 		update:{
 			method:"PUT"
 		} , query:{

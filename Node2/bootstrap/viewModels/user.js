@@ -41,7 +41,6 @@ var UserPassword = require('./password-encrypt.js');
 
 UserViewModel = {
 	list : function(listData){
-		console.log(listData);
 		console.log('processing data');
 		var result = listData.data.map(function(data){
 			return {
@@ -50,7 +49,7 @@ UserViewModel = {
 				fullname : data.fullname,
 				email : data.email,
 				phone_number : data.phone_number,
-				title : data.role.name}
+				roleTitle : data.role.title}
 			});
 		listData.data = result
 		return listData;

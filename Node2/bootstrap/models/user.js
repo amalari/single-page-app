@@ -35,7 +35,7 @@ var User = bookshelf.Model.extend({
 		return new this({id:id}).destroy();
 	}),
 	getUserValid : Promise.method(function(username){
-		return new this({username : username}).fetch();
+		return new this({username : username}).fetch({withRelated : ['role']});
 	})
 })
 

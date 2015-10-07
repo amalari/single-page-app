@@ -3,18 +3,19 @@
 <head>
 	<title>Login</title>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
-	<script src="/scripts/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="/css/AdminLTE.min.css">
 	{{#if generalMessage}}
-        <div class="alert alert-dismissible alert-{{generalMessage.type}}">
-                <button type="button" class="close"
-                        data-dismiss="alert" aria-hidden="true">&times;<button>
-                <strong>{{generalMessage.intro}}</strong> {{generalMessage.message}}
+        <div class="alert alert-warning alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+          {{generalMessage.message}}
         </div>
-{{/if}}
+        {{/if}}
 </head>
 <body>
 	{{{body}}}
-	<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+	<script src="/scripts/dependencies/jQuery-2.1.4.min.js"></script>
+	<script src="/scripts/dependencies/bootstrap.min.js"></script>
 	{{{_sections.jquery}}}
 
 </body>

@@ -22,6 +22,7 @@
 								<th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Fullname</th>
 								<th>Telp/HP Number</th>
 								<th>Email</th>
+								<th>Role</th>
 								<th width="20px">Edit</th>
 								<th width="20px">Delete</th>
 							</tr>
@@ -32,6 +33,7 @@
 								<td>{{item.fullname}}</td>
 								<td>{{item.phone_number}}</td>
 								<td>{{item.email}}</td>
+								<td>{{item.roleTitle}}</td>
 								<td>
 									<a ui-sref="user-update({id: item.id})" class="btn btn-default"><i class="fa fa-edit"></i></a>									
 								</td>

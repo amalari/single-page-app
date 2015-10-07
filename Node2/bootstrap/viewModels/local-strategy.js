@@ -1,68 +1,50 @@
-var passport = require('passport'),
-User = require('./../models/user.js'),
-LocalStrategy = require('passport-local').Strategy,
-bcrypt = require('bcrypt-nodejs');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require('bcrypt-nodejs');
+var User = require('./../models/user.js');
 
-passport.serializeUser(function(user, done){
-	done(null, user);
-});
-passport.deserializeUser(function(id, done){
-	User.get(id).then(function(user){
-		done(null, user);
-	})
-	.catch(function(err){
-		done(err, null);
-	});
-});
+var isValidPassword = function(pass, passEncrypted){
+	console.log("password asli : " + pass);
+	console.log("password encrypted : " + passEncrypted);
+		// var result;
+		return bcrypt.compareSync(pass, passEncrypted)
+		// , function(err, res){
+		// 	console.log("hasil " + res);
+		// 	return res;
+		// })
+		// console.log(result);
+		// return result;
+	};
 
-module.exports = function(app){
-	console.log("lewat local strategy")
-	// if(!options.successRedirect){
-	// 	options.successRedirect = '/';
-	// };
-	// if(!options.failureRedirect){
-	// 	options.failureRedirect = '/login';
-	// };
+	exports = function(app){
+		passport.use('local', new LocalStrategy({
+			passReqToCallback : true
+		},function(req, username, password, done) {
+			User.getUserValid(username)
+			.then(function(model){
+				console.log("local strategy");
+				var user;
+				if(model === null){
+					return done(null, false, req.flash('message',{
+						type: 'Notice',
+						intro: 'Validation error',
+						message: 'Incorect username'}));
+				} else{
+					user = model.toJSON()
+				}
+				if(!isValidPassword(password, user.password)){
+					return done(null, false, req.flash('message',{
+						type: 'Notice',
+						intro: 'Validation error',
+						message: 'Incorect password'}));
+				}
+				return done(null, user);
 
-	var isValidPassword = function(pass, passEncrypted){
-		var result;
-		bcrypt.compare(password, user.password, function(err, res){
-			result = res;
-		})
-		console.log(result);
-		return result;
+			})
+			.catch(function(err){
+				return done(err, null);
+			})
+		}));
 	}
 
-	return {
-		init : 
-		//function(){
-			passport.use(new LocalStrategy(function(username, password, done) {
-				User.getUserValid(username)
-				.then(function(model){
-					console.log("local strategy");
-					var user = model.toJSON();
-					console.log(user);
-					if(user.username === null){
-						return done(null, false, req.flash('message',{
-							type: 'Notice',
-							intro: 'Validation error',
-							message: 'Incorect username'}));
-					}
-					if(!isValidPassword(password, user.password)){
-						return done(null, false, req.flash('message',{
-							type: 'Notice',
-							intro: 'Validation error',
-							message: 'Incorect password'}));
-					}
-					return done(null, user);
-
-				})
-				.catch(function(err){
-					return done(err, null);
-				})
-			}))
-		}
-		// registerRoutes : function(){
-		// 	app.get()
-		// }
-	}
+	module.exports = exports;

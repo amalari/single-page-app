@@ -1,6 +1,48 @@
 'use strict';
 
-angular.module('bootstrapApp',['ui.router','ui.bootstrap','ngAnimate','ngResource','bootstrapApp.controllers','bootstrapApp.services'])
+angular.module('bootstrapApp',['ui.router','ui.bootstrap','ngAnimate','ngResource','bootstrapApp.controllers','bootstrapApp.services', 'bootstrapApp.config'])
+.config(['$httpProvider', function($httpProvider) {
+	$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+	$httpProvider.interceptors.push([
+		'$injector',
+		function ($injector) {
+			return $injector.get('AuthInterceptor');
+		}
+		]);
+	$httpProvider.interceptors.push([
+		'$injector',
+		function ($injector) {
+			return $injector.get('ErrorInterceptor');
+		}
+		]);
+}])
+.factory('AuthInterceptor', ['$window', '$q', '$injector', function ($window, $q, $injector) {
+	return {
+		responseError: function (response) { 
+			if(response.status === 401){
+				$window.location = '/login';
+			}else if(response.status === 403){
+				$('.modal').modal('hide');
+				$injector.get('$state').transitionTo('forbidden');
+			}
+			return $q.reject(response);
+		}
+	};
+}])
+.factory('ErrorInterceptor', ['$window', '$q', '$injector', '$timeout', function ($window, $q, $injector, $timeout) {
+	return {
+		responseError: function (response) { 
+			if(response.status === 500){
+				$('.modal').modal('hide');
+				$timeout(function(){$injector.get('$state').transitionTo('error');},500);
+			}else if(response.status === 409 || response.status === 400){
+       // $('.modal').modal('hide');
+       $window.alert(response.data.message);
+   }
+   return $q.reject(response);
+}
+};
+}])
 .config(['$stateProvider', '$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
 	$stateProvider
 	.state('user',{
@@ -42,6 +84,10 @@ angular.module('bootstrapApp',['ui.router','ui.bootstrap','ngAnimate','ngResourc
 		url: '/login',
 		templateUrl: 'templates/product/login.html',
 		controller: 'LoginCtrl'
+	})
+	.state('forbidden', {
+		url: '/forbidden',
+		templateUrl: 'templates/forbidden.html'
 	});
 
 	$urlRouterProvider.otherwise('/user');

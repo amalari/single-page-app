@@ -4,8 +4,8 @@ var Product = require('./../models/product.js');
 
 exports = {
 	registerRoutes : function(app){
-		app.get('/history', this.list);
-		app.post('/history', this.save);
+		app.get('/api/history', this.list);
+		app.post('/api/history', this.save);
 	},
 	list : function(req, res){
 		ProductHistory.get()

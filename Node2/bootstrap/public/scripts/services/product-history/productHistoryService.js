@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('bootstrapApp.services')
-.factory('ProductHistory', ['$window', 'Product', '$resource', function($window, Product, $resource){
-	return $resource('http://localhost:3001/history/:id', {id:'@id'})
+.factory('ProductHistory', ['$window', 'Product', '$resource', 'ENV', function($window, Product, $resource, ENV){
+	return $resource(ENV.apiEndpoint + '/api/history/:id', {id:'@id'})
 }]);
 // 	if(typeof $window.productsHistory == 'undefined'){
 // 		$window.productsHistory = [];
